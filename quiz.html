@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akustik Trainer - Expedition Mensch</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; display: flex; justify-content: center; padding: 20px; }
+        #quiz-container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 600px; width: 100%; }
+        h1 { color: #2c3e50; font-size: 24px; text-align: center; }
+        #progress { margin-bottom: 20px; color: #7f8c8d; font-size: 0.9em; }
+        .question { font-size: 1.2em; font-weight: bold; margin-bottom: 20px; color: #34495e; }
+        .options { display: grid; gap: 10px; }
+        button { padding: 12px; border: 2px solid #3498db; background: white; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 1em; text-align: left; }
+        button:hover { background: #3498db; color: white; }
+        #result-container { display: none; text-align: center; }
+        .correct { background-color: #2ecc71 !important; color: white; }
+        .wrong { background-color: #e74c3c !important; color: white; }
+        #next-btn { margin-top: 20px; width: 100%; background: #2c3e50; color: white; display: none; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <h1>Akustik Trainer 🎧</h1>
+    <div id="progress">Frage 1 von X</div>
+    
+    <div id="quiz-content">
+        <div class="question" id="question-text">Lade Frage...</div>
+        <div class="options" id="options-container"></div>
+        <button id="next-btn" onclick="nextQuestion()">Nächste Frage</button>
+    </div>
+
+    <div id="result-container">
+        <h2>Training beendet!</h2>
+        <p id="score-text"></p>
+        <button onclick="location.reload()" style="text-align:center; width:100%">Nochmal starten</button>
+    </div>
+</div>
+
+<script>
+    [span_1](start_span)// Fragen basierend auf der Liste aus dem Expediheft[span_1](end_span)
+    const questions = [
+        {
+            q: "Was beschreibt die 'Amplitude' einer Schallwelle?",
+            o: ["Die Tonhöhe", "Die Lautstärke", "Die Geschwindigkeit", "Die Wellenlänge"],
+            a: 1
+        },
+        {
+            q: "Welches Phänomen tritt auf, wenn sich zwei Wellen überlagern?",
+            o: ["Reflexion", "Absorption", "Interferenz", "Doppler-Effekt"],
+            a: 2
+        },
+        {
+            q: "Was passiert bei der 'destruktiven Interferenz'?",
+            o: ["Die Wellen verstärken sich", "Die Wellen löschen sich aus", "Der Ton wird höher", "Die Welle wird reflektiert"],
+            a: 1
+        },
+        {
+            q: "Ein unregelmäßiges Wellenbild ohne klare Tonhöhe ist ein...",
+            o: ["Klang", "Ton", "Knall", "Geräusch"],
+            a: 3
+        },
+        {
+            q: "Wie verändert sich die Tonhöhe eines herannahenden Autos beim Doppler-Effekt?",
+            o: ["Sie wird tiefer", "Sie bleibt gleich", "Sie wird höher", "Sie verschwindet"],
+            a: 2
+        },
+        {
+            q: "Beim Doppler-Effekt werden die Wellen vor dem Fahrzeug...",
+            o: ["Gezerrt (größere Wellenlänge)", "Gestaucht (kleinere Wellenlänge)", "Gar nicht verändert", "Reflektiert"],
+            a: 1
+        },
+        {
+            q: "Wo findet im Ohr die Umwandlung in elektrische Signale statt?",
+            o: ["Trommelfell", "Gehörknöchelchen", "Gehörschnecke (Cochlea)", "Ohrmuschel"],
+            a: 2
+        },
+        {
+            q: "Welche Knochen gehören zu den Gehörknöchelchen?",
+            o: ["Hammer, Amboss, Steigbügel", "Pauke, Trommel, Flöte", "Schnecke, Muschel, Gang", "Halm, Stein, Bügel"],
+            a: 0
+        },
+        {
+            q: "Was passiert, wenn Schall an einer weichen Oberfläche 'absorbiert' wird?",
+            o: ["Er wird zurückgeworfen", "Er wird in Wärme umgewandelt/geschluckt", "Er wird lauter", "Er wird höher"],
+            a: 1
+        },
+        {
+            q: "Ein kurzer, heftiger Schallausschlag, der schnell abklingt, ist ein...",
+            o: ["Klang", "Geräusch", "Knall", "Ton"],
+            a: 2
+        },
+        {
+            q: "Eine Welle mit großem Abstand zwischen den Wellenbergen ist...",
+            o: ["Ein hoher Ton", "Ein tiefer Ton", "Ein lauter Ton", "Ein leiser Ton"],
+            a: 1
+        },
+        {
+            q: "Die Wellenlänge wird in der Physik oft mit welchem Symbol abgekürzt?",
+            o: ["A", "f", "Lambda (λ)", "V"],
+            a: 2
+        },
+        {
+            q: "Was ist ein technischer Schallempfänger?",
+            o: ["Lautsprecher", "Stimmgabel", "Mikrofon", "Gitarre"],
+            a: 2
+        },
+        {
+            q: "Warum ist ein Echo ein Beispiel für Reflexion?",
+            o: ["Weil der Schall geschluckt wird", "Weil der Schall zurückgeworfen wird", "Weil sich Wellen überlagern", "Wegen des Doppler-Effekts"],
+            a: 1
+        },
+        {
+            q: "Was schwingt zuerst, wenn Schall auf das Ohr trifft?",
+            o: ["Die Schnecke", "Der Steigbügel", "Das Trommelfell", "Der Hörnerv"],
+            a: 2
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    function loadQuestion() {
+        answered = false;
+        const q = questions[currentQuestionIndex];
+        document.getElementById("progress").innerText = `Frage ${currentQuestionIndex + 1} von ${questions.length}`;
+        document.getElementById("question-text").innerText = q.q;
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+        document.getElementById("next-btn").style.display = "none";
+
+        q.o.forEach((option, index) => {
+            const btn = document.createElement("button");
+            btn.innerText = option;
+            btn.onclick = () => checkAnswer(index, btn);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(index, btn) {
+        if(answered) return;
+        answered = true;
+        const correctIndex = questions[currentQuestionIndex].a;
+        const allButtons = document.getElementById("options-container").getElementsByTagName("button");
+
+        if(index === correctIndex) {
+            btn.classList.add("correct");
+            score++;
+        } else {
+            btn.classList.add("wrong");
+            allButtons[correctIndex].classList.add("correct");
+        }
+        document.getElementById("next-btn").style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if(currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById("quiz-content").style.display = "none";
+        document.getElementById("result-container").style.display = "block";
+        document.getElementById("score-text").innerText = `Du hast ${score} von ${questions.length} Fragen richtig beantwortet!`;
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
